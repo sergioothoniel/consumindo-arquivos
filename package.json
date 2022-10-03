@@ -1,0 +1,12 @@
+{
+  "name": "consumindo-arquivos",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:sergioothoniel/consumindo-arquivos.git",
+  "author": "sergioothoniel <sergioothoniel@hotmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "runapp": "node index.js"
+  }
+}

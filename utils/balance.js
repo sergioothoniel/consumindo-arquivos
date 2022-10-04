@@ -1,29 +1,48 @@
-function itemsBalanceReport(itemsBalance){    
+function itemsBalanceReport(itemsBalance, order){    
     let missingInvoiceItems = false
     let tooManyItems = false
     let missingItemsList = []
     let tooManyItemsList = []
-
+    let missingItemsTotalValue = 0
+    const totalValue = String(orderTotalValueFunction(order).toFixed(2)).replace(".", ",")
+   
     for(let key in itemsBalance){        
         if(itemsBalance[key] > 0){
             missingInvoiceItems = true
-            missingItemsList.push({"número_item": key, "quantidade": itemsBalance[key]})
+            missingItemsList.push({"número_item": key, "saldo_quantidade": itemsBalance[key]})
+
+            const unitaryValue = Number(order.data.find(item=>item["número_item"] === Number(key))["valor_unitário_produto"].replace(",", "."))
+            missingItemsTotalValue += itemsBalance[key]*unitaryValue
         }
 
         if(itemsBalance[key] < 0){
-            tooManyItems = true
-            tooManyItemsList.push({"número_item": key, "quantidade": itemsBalance[key]})
+            throw `Too many invoices for item number ${key} in order ${order["id_pedido"]}` 
+            // tooManyItems = true
+            // tooManyItemsList.push({"número_item": key, "quantidade": itemsBalance[key]})
         }
     }
 
-    return {missingInvoiceItems, tooManyItems, missingItemsList, tooManyItemsList}
+    missingItemsTotalValue = String(missingItemsTotalValue.toFixed(2)).replace(".", ",")
+
+    return {missingInvoiceItems, tooManyItems, missingItemsList, tooManyItemsList, orderTotalValue: totalValue, missingItemsTotalValue}
+}
+
+
+
+function orderTotalValueFunction(order){
+    const totalValue = order.data.reduce((acc, cur) =>{
+        const currentItemValue = Number(cur["quantidade_produto"])*Number(cur["valor_unitário_produto"].replace(",", "."))
+        return acc+currentItemValue
+    }, 0)
+
+    return totalValue
 }
 
 
 
 export function dataBalance(order, invoicesList){
-    const orderId = Number(order["id_pedido"])  
-
+    const orderId = Number(order["id_pedido"])    
+        
     const invoicesFilteredByOrderId = invoicesList.filter(invoice =>{
         for(let i = 0; i<invoice.data.length; i++){
             if(invoice.data[i]["id_pedido"] === orderId){
@@ -50,11 +69,10 @@ export function dataBalance(order, invoicesList){
             }
         }
 
-        itemsBalanceSumary[itemNumber] ? itemsBalanceSumary[itemNumber] -= quantityItems : itemsBalanceSumary[itemNumber] = quantityItems
-        
+        itemsBalanceSumary[itemNumber] ? itemsBalanceSumary[itemNumber] -= quantityItems : itemsBalanceSumary[itemNumber] = quantityItems        
     }
 
-    let summary = itemsBalanceReport(itemsBalanceSumary)  
+    let summary = itemsBalanceReport(itemsBalanceSumary, order)  
     summary.invoices = invoicesId
     
     return summary

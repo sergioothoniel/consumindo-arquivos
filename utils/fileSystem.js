@@ -21,7 +21,29 @@ export async function listFilesInFolder(path){
         return files  
 
     } catch (error) {
-
         console.error(error)        
     }    
+}
+
+
+export async function writeFile(path, data){
+    try {
+
+        await fs.writeFile(path, data)
+        console.log(`File ${path} created!`)
+        
+    } catch (error) {
+        console.error(error)        
+    }
+}
+
+
+export function jsonObjectToTextFunction(data){
+    let textResult = ""
+    
+    data.forEach(object =>{
+        textResult += JSON.stringify(object)+"\n"
+    })
+
+    return textResult
 }

@@ -1,5 +1,5 @@
 import { dataBalance } from "./utils/balance.js";
-import { listFilesInFolder, readFile } from "./utils/fileSystem.js";
+import { jsonObjectToTextFunction, listFilesInFolder, readFile, writeFile } from "./utils/fileSystem.js";
 import { invoicesCheck, invoicesSchemaVerification } from "./utils/invoicesSchemas.js";
 import { itemsNumberVerification, ordersSchemaVerification } from "./utils/ordersSchemas.js";
 
@@ -50,11 +50,33 @@ for(let i = 0; i<invoicesList.length; i++){
     invoicesDetails.push({invoice: invoicesList[i].replace(".txt", ''), data: invoicesDataFile})
 }
 
-// console.log(ordersDetails.length)
+const report = []
 
 for(let i = 0; i<ordersDetails.length; i++){
     let reportData = dataBalance(ordersDetails[i], invoicesDetails)
     reportData["id_pedido"] = ordersDetails[i]["id_pedido"]
-    console.log(reportData)
+    report.push(reportData)
 }
+
+
+const finalReport = report.map(item =>{
+    if(item.missingInvoiceItems){
+        const finalObject = {
+            "id_pedido": item.id_pedido,
+            "Valor_total_pedido": item.orderTotalValue,
+            "saldo_pendente": item.missingItemsTotalValue,
+            "items_pendentes": item.missingItemsList                        
+        }
+
+        return finalObject
+    }
+    else{
+        return false
+    }
+}).filter(item=>!!item)
+
+
+const finalReportFormated = jsonObjectToTextFunction(finalReport)
+
+writeFile("BalançoDePedidos.txt", finalReportFormated)
 

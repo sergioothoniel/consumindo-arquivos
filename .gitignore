@@ -1,1 +1,3 @@
 BalançoDePedidos.txt
+node_modules
+yarn.lock

@@ -3,7 +3,7 @@
 ## Resumo
 
 <p>Aplicação para gerar relatório de items pendentes para cada pedido incluído.</p>
-<p>Desenvolvido em Node Javascript</p>
+<p>Desenvolvido em Node Javascript para rodar em Linux</p>
 
 <br/>
 

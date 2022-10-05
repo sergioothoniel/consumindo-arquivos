@@ -7,6 +7,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "runapp": "node index.js"
+    "runapp": "node src/index.js"
   }
 }

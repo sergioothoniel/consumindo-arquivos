@@ -8,7 +8,6 @@ const invoicesList = await listFilesInFolder("./Notas")
 
 const ordersDetails = []
 const invoicesDetails = []
-
 for(let i = 0; i<ordersList.length; i++){
     const ordersDataFile = await readFile(`./Pedidos/${ordersList[i]}`)
     
